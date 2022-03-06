@@ -2,12 +2,11 @@ require("dotenv").config();
 require("./config/dbConnection");
 const express = require("express");
 const path = require("path");
-const fileUpload = require("express-fileupload");
+// const fileUpload = require("express-fileupload");
 
 const cors = require("cors");
 
 const app = express();
-
 
 /**
  * Middlewares
@@ -21,7 +20,6 @@ app.use(express.urlencoded({ extended: false })); // Access data sent as applica
 
 app.use(express.static(path.join(__dirname, "public")));
 
-
 /**
  * Routes
  */
@@ -33,21 +31,6 @@ app.use((req, res, next) => {
   error.status = 404;
   next(error);
 });
-
-// Upload Endpoint
-// app.post("/upload", (req, res) => {
-//   if (req.files === null) {
-//     return res.status(400).json({ msg: "No file uploaded" });
-//   }
-//   const file = req.files.file;
-//   file.mv(`${__dirname}/client/public/uploads/${file.name}`, (err) => {
-//     if (err) {
-//       console.error(err);
-//       return res.status(500).send(err);
-//     }
-//     res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
-//   });
-// });
 
 
 // Error handler middleware

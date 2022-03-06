@@ -1,7 +1,9 @@
 const express = require("express");
+require("../config/dbConnection");
 const router = express.Router();
 const DocumentModel = require("../models/Document");
-const upload = require("../config/cloudinary");
+const upload = require("../config/multer");
+// const cloudinary = require("../config/cloudinary");
 
 router.get("/", (req, res) => {
   DocumentModel.find()
@@ -14,24 +16,40 @@ router.get("/", (req, res) => {
     });
 });
 
-router.post("/upload", upload.single("file"), (req, res) => {
-  //uploader.single("file")
-  let newDocument = {...req.body};
+router.post("/upload", upload.single("file"), async (req, res) => {
+  const today = new Date();
+  const date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  const time =
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  const dateTime = date + " " + time;
+  console.log(req.file.path);
+  console.log(req.file);
+  console.log(req.body);
 
-  if (req.file) {
-    newDocument.file = req.file.path; // Add file key to req.body
-  } 
-  // else {
-  //   return res.status(400).json({ message: "File NOT provided" });
-  // }
 
-  DocumentModel.create(newDocument)
-    .then((dbResult) => {
-      console.log(newDocument);
-      console.log("file details: ",dbResult);
-      res.redirect("/upload");
-    })
-    .catch(next);
+  try {
+    // const result = await cloudinary.uploader.upload(req.file.path);
+    // console.log(result);
+
+    // Create instance of document
+    let document = new DocumentModel({
+      fileName: req.body.fileName,
+      uploadedBy: req.body.uploadedBy,
+      desription: req.body.description,
+      date: dateTime,
+      // cloudinary_id: result.public_id,
+      file: req.file.path,
+    });
+
+    console.log(document);
+    // Save document in db
+    await document.save();
+
+    res.json(document);
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = router;

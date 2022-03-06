@@ -4,12 +4,13 @@ const Schema = mongoose.Schema;
 const documentSchema = new Schema({
   // email: { type: String, required: true },
   fileName: String,
-  file:String,
   desription: String,
-  uploadedBy:String,
+  uploadedBy: String,
   date: String,
+  // cloudinary_id: String,
+  file: String,
 });
 
-const DocumentModel = mongoose.model("Document", documentSchema);
+const DocumentModel = mongoose.model("Documents", documentSchema);
 
 module.exports = DocumentModel;
